@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">NBPRates</string>
+    <string name="rateslist_title">Currency Rates List</string>
+    <string name="rateslist_button_no_items">No items. Refresh</string>
+    <string name="ratedetails_title">Currency Rates Details: %1$s</string>
+    <string name="ratedetails_label_no_details">Failed to retrieve details</string>
+</resources>
