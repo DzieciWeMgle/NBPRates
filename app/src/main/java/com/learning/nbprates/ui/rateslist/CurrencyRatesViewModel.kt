@@ -11,20 +11,23 @@ import kotlinx.coroutines.launch
 
 class CurrencyRatesViewModel(
     application: Application
-): AndroidViewModel(application) {
+) : AndroidViewModel(application) {
 
-    private val _uiState = MutableStateFlow<CurrencyRatesListUiState>(CurrencyRatesListUiState(emptyList()))
+    private val _uiState =
+        MutableStateFlow<CurrencyRatesListUiState>(CurrencyRatesListUiState(emptyList(), true))
     val uiState: StateFlow<CurrencyRatesListUiState> = _uiState
 
     private val repository: Repository = getApplication<NbpRatesApplication>().repository
+
     init {
         refresh()
     }
 
     fun refresh() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
             val currencies = repository.getNbpRates()
-            _uiState.value = CurrencyRatesListUiState(currencies.sortedBy { currency -> currency.currency })
+            _uiState.value = CurrencyRatesListUiState(currencies.sortedBy { currency -> currency.currency }, false)
         }
     }
 }

@@ -16,21 +16,25 @@ import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-class Repository(
-    private val httpClient: HttpClient = HttpClient(),
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+class Repository @Inject constructor(
+    private val httpClient: HttpClient,
+    private val ioDispatcher: CoroutineDispatcher,
 ) {
     private val ioScope = CoroutineScope(ioDispatcher)
 
     private val dateFormat = DateTimeFormatter.ofPattern(DATE_FORMAT)
 
     suspend fun getNbpRates(): List<Currency> {
-        val deferred = ioScope.async {
-            loadList(HTTP_TABLE_A) + loadList(HTTP_TABLE_B)
+        val deferredOne = ioScope.async {
+            loadList(HTTP_TABLE_A)
+        }
+        val deferredTwo = ioScope.async {
+            loadList(HTTP_TABLE_B)
         }
 
-        return deferred.await()
+        return deferredOne.await() + deferredTwo.await()
     }
 
     suspend fun getNbpRates(
@@ -106,4 +110,4 @@ private const val HTTP_CURRENCY_RATES_TEMPLATE = "$HTTP_BASE$RATES_AFFIX%S/%S/%S
 private const val HTTP_TABLE_A = "${HTTP_BASE}${TABLE_AFFIX}a$FORMAT_SUFFIX"
 private const val HTTP_TABLE_B = "${HTTP_BASE}${TABLE_AFFIX}b$FORMAT_SUFFIX"
 private const val DATE_FORMAT = "yyyy-MM-dd"
-private const val DATE_DAYS_AGO = 14
+private const val DATE_DAYS_AGO = 140

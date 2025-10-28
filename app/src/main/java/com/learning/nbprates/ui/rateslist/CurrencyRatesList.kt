@@ -3,12 +3,13 @@ package com.learning.nbprates.ui.rateslist
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,13 +37,16 @@ fun CurrencyRatesList(
             text = stringResource(R.string.rateslist_title),
             style = MaterialTheme.typography.titleMedium
         )
+        if (uiState.isLoading) {
+            LinearProgressIndicator(Modifier.fillMaxWidth())
+        }
         Spacer(Modifier.height(8.dp))
         uiState.currencies.let {
             if (it.isNotEmpty()) {
                 ActualCurrencyRatesList(uiState.currencies) { onCurrencySelected(it) }
             } else {
                 Spacer(Modifier.height(8.dp).weight(1f))
-                NoItemsFound({ viewModel.refresh() })
+                NoItemsFound(isLoading = uiState.isLoading, { viewModel.refresh() })
             }
         }
     }
@@ -59,8 +63,8 @@ fun ActualCurrencyRatesList(currencies: List<Currency>, onCurrencySelected: (Cur
 }
 
 @Composable
-fun NoItemsFound(onRefresh: () -> Unit) {
-    Button(onClick = { onRefresh() }) {
+fun NoItemsFound( isLoading: Boolean, onRefresh: () -> Unit) {
+    Button(onClick = { onRefresh() }, enabled = !isLoading) {
         Text(
             text = stringResource(R.string.rateslist_button_no_items),
         )

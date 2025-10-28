@@ -16,7 +16,9 @@ import com.learning.nbprates.model.Destination
 import com.learning.nbprates.ui.ratedetails.CurrencyRateDetails
 import com.learning.nbprates.ui.rateslist.CurrencyRatesList
 import com.learning.nbprates.ui.theme.NBPRatesTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
